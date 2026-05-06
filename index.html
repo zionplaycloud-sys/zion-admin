@@ -13,7 +13,8 @@ body {
   height:100vh;
   background:#050510;
   color:white;
-  overflow:hidden;
+  overflow-y:auto;
+  overflow-x:hidden;
 }
 
 /* SIDEBAR */
@@ -52,7 +53,12 @@ body {
 .menu li.active { background:linear-gradient(90deg,#9333ea,#00d4ff); }
 
 /* MAIN */
-.main { flex:1; background:url("bg.jpg") center/cover no-repeat; }
+.main {
+  flex:1;
+  background:url("bg.jpg") center/cover no-repeat;
+  overflow-y:auto;
+  height:100vh;
+}
 .content { padding:30px; }
 
 /* CARD */
