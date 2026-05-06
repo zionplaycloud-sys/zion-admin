@@ -98,13 +98,25 @@ button {
   <div class="logo-text">ZIONPLAY</div>
   <div class="admin-btn">ADMIN PANEL</div>
 
-  <ul class="menu">
-    <li onclick="openDashboard(this)" class="active">
-  <div class="icon"></div>Dashboard
+ <ul class="menu">
+
+<li onclick="openDashboard(this)" class="active">
+<div class="icon"></div>Dashboard
 </li>
-    <li onclick="openUsers(this)"><div class="icon"></div>Users</li>
-    <li onclick="openSubscriptions(this)"><div class="icon"></div>Subscriptions</li>
-  </ul>
+
+<li onclick="openUsers(this)">
+<div class="icon"></div>Users
+</li>
+
+<li onclick="openSubscriptions(this)">
+<div class="icon"></div>Subscriptions
+</li>
+
+<li onclick="openGames(this)">
+<div class="icon"></div>Games
+</li>
+
+</ul>
 </div>
 
 <!-- MAIN -->
@@ -170,7 +182,34 @@ button {
   </div>
 
   <!-- USER CONTROL -->
-  <div class="card">
+
+    <div class="card" id="games-page" style="display:none;">
+
+  <h2>Games</h2>
+
+  <div style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
+
+    <input id="game-name" placeholder="Game Name">
+
+    <input id="game-img" placeholder="Image URL">
+
+    <input id="game-path" placeholder="Launch Path">
+
+    <button class="primary" onclick="addGame()">
+      Add Game
+    </button>
+
+  </div>
+
+  <div id="gamesGrid" style="
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:15px;
+  "></div>
+
+</div>
+<div class="card">
+
     <h2>User Control</h2>
 
     <input id="admin-email" placeholder="User Email">

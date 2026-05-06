@@ -100,9 +100,10 @@ function openUsers(el) {
   el.classList.add("active");
 
   // hide all cards inside admin panel
-  document.getElementById("dashboard-page").style.display = "none";
+document.getElementById("dashboard-page").style.display = "none";
 document.getElementById("users-page").style.display = "none";
 document.getElementById("subscriptions-page").style.display = "none";
+document.getElementById("games-page").style.display = "none";
 
   // show users page
   document.getElementById("users-page").style.display = "block";
@@ -168,6 +169,7 @@ function openSubscriptions(el) {
 document.getElementById("dashboard-page").style.display = "none";
 document.getElementById("users-page").style.display = "none";
 document.getElementById("subscriptions-page").style.display = "none";
+document.getElementById("games-page").style.display = "none";
   // show subscriptions page
   document.getElementById("subscriptions-page").style.display = "block";
 
@@ -253,12 +255,151 @@ async function deletePlan(id) {
 }
 
 // ================= DASHBOARD =================
+
 function openDashboard(el){
-  document.querySelectorAll(".menu li").forEach(li => li.classList.remove("active"));
+
+  document.querySelectorAll(".menu li")
+    .forEach(li => li.classList.remove("active"));
+
   el.classList.add("active");
 
-document.getElementById("dashboard-page").style.display = "none";
-document.getElementById("users-page").style.display = "none";
-document.getElementById("subscriptions-page").style.display = "none";
   document.getElementById("dashboard-page").style.display = "block";
+
+  document.getElementById("users-page").style.display = "none";
+
+  document.getElementById("subscriptions-page").style.display = "none";
+
+  document.getElementById("games-page").style.display = "none";
+}
+
+
+// ================= GAMES =================
+
+function openGames(el) {
+
+  document.querySelectorAll(".menu li")
+    .forEach(li => li.classList.remove("active"));
+
+  el.classList.add("active");
+
+  document.getElementById("dashboard-page").style.display = "none";
+
+  document.getElementById("users-page").style.display = "none";
+
+  document.getElementById("subscriptions-page").style.display = "none";
+
+  document.getElementById("games-page").style.display = "block";
+
+  loadGamesAdmin();
+}
+
+async function loadGamesAdmin() {
+
+  const grid = document.getElementById("gamesGrid");
+
+  grid.innerHTML = "Loading...";
+
+  const data = await safeFetch(`${BACKEND_URL}/get-games`);
+
+  if (!data || !data.success) {
+    grid.innerHTML = "Failed to load games";
+    return;
+  }
+
+  let html = "";
+
+  data.games.forEach(g => {
+
+    html += `
+      <div style="
+        background:rgba(0,0,0,0.5);
+        border-radius:12px;
+        overflow:hidden;
+        box-shadow:0 0 10px rgba(123,47,247,0.5);
+      ">
+
+        <img src="${g.img}"
+        style="
+          width:100%;
+          height:120px;
+          object-fit:cover;
+        ">
+
+        <div style="padding:10px;">
+
+          <b>${g.name}</b>
+
+          <br><br>
+
+          <button
+            class="danger"
+            onclick="deleteGame('${g.id}')">
+
+            Delete
+
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  });
+
+  grid.innerHTML = html;
+}
+
+async function addGame() {
+
+  const name = document.getElementById("game-name").value;
+
+  const img = document.getElementById("game-img").value;
+
+  const exe_path = document.getElementById("game-path").value;
+
+  const data = await safeFetch(`${BACKEND_URL}/add-game`, {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      username: currentAdminUsername,
+      name,
+      img,
+      exe_path
+    })
+  });
+
+  if (data?.success) {
+
+    document.getElementById("game-name").value = "";
+    document.getElementById("game-img").value = "";
+    document.getElementById("game-path").value = "";
+
+    loadGamesAdmin();
+
+  } else {
+
+    alert("Failed");
+
+  }
+}
+
+async function deleteGame(id) {
+
+  if (!confirm("Delete game?")) return;
+
+  const data = await safeFetch(`${BACKEND_URL}/delete-game`, {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      username: currentAdminUsername,
+      id
+    })
+  });
+
+  if (data?.success) {
+    loadGamesAdmin();
+  }
 }
