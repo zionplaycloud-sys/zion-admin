@@ -287,9 +287,9 @@ button {
       + Add Expense
     </button>
 
-    <button class="info">
-      Download PDF
-    </button>
+  <button class="info" onclick="downloadTransactionsPDF()">
+  Download PDF
+</button>
 
   </div>
 
@@ -305,22 +305,25 @@ button {
 
         <tr style="background:rgba(255,255,255,0.05);">
 
-          <th style="padding:12px;">User</th>
+  <th style="padding:12px;">User</th>
 
-          <th>Type</th>
+  <th>Type</th>
 
-          <th>Amount</th>
+  <th>Amount</th>
 
-          <th>Hours</th>
+  <th>Hours</th>
 
-          <th>Points</th>
+  <th>Points</th>
 
-          <th>Date</th>
+  <th>Date</th>
 
-        </tr>
+  <th>Credited</th>
 
-      </thead>
+  <th>Debited</th>
 
+</tr>
+
+</thead>
       <tbody id="transactionsTable">
 
         <tr>
@@ -330,12 +333,38 @@ button {
         </tr>
 
       </tbody>
+</table>
 
-    </table>
+  </div>
+
+  <!-- FINANCE SUMMARY -->
+  <div class="card" style="margin-top:20px;">
+
+    <h3>Finance Summary</h3>
+
+    <p>
+      Total Credited:
+      <span id="totalCredited">₹0</span>
+    </p>
+
+    <br>
+
+    <p>
+      Total Debited:
+      <span id="totalDebited">₹0</span>
+    </p>
+
+    <br>
+
+    <p>
+      Profit:
+      <span id="totalProfit">₹0</span>
+    </p>
 
   </div>
 
 </div>
+
 
 <!-- DASHBOARD CONTROLS -->
 <div id="dashboard-controls">

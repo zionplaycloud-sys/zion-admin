@@ -446,39 +446,188 @@ async function loadTransactions(range) {
 
   table.innerHTML = `
     <tr>
-      <td colspan="6" style="padding:20px; text-align:center;">
+      <td colspan="8"
+      style="padding:20px;text-align:center;">
         Loading...
       </td>
     </tr>
   `;
 
-  // placeholder UI only for now
+  const data = await safeFetch(
+    `${BACKEND_URL}/admin-transactions?username=${encodeURIComponent(currentAdminUsername)}`
+  );
 
-  setTimeout(() => {
+  if (!data || !data.success) {
 
     table.innerHTML = `
       <tr>
-
-        <td style="padding:12px;">john</td>
-
-        <td>Payment</td>
-
-        <td>₹499</td>
-
-        <td>8h</td>
-
-        <td>49</td>
-
-        <td>2026-05-06</td>
-
+        <td colspan="8"
+        style="padding:20px;text-align:center;">
+          Failed to load
+        </td>
       </tr>
     `;
 
-  }, 500);
+    return;
+  }
+
+  let html = "";
+
+  let credited = 0;
+  let debited = 0;
+
+  // PAYMENTS
+  data.payments.forEach(p => {
+
+    credited += Number(p.amount || 0);
+
+    html += `
+      <tr>
+
+        <td style="padding:12px;">
+          ${p.username || "-"}
+        </td>
+
+        <td>
+          Payment
+        </td>
+
+        <td>
+          ₹${p.amount || 0}
+        </td>
+
+        <td>
+          ${p.hours || 0}h
+        </td>
+
+        <td>
+          ${p.points || 0}
+        </td>
+
+        <td>
+          ${new Date(p.created_at)
+            .toLocaleDateString()}
+        </td>
+
+        <td style="color:#00ff88;">
+          ₹${p.amount || 0}
+        </td>
+
+        <td style="color:#ff4444;">
+          ₹0
+        </td>
+
+      </tr>
+    `;
+  });
+
+  // EXPENSES
+  data.expenses.forEach(e => {
+
+    debited += Number(e.amount || 0);
+
+    html += `
+      <tr>
+
+        <td style="padding:12px;">
+          Admin
+        </td>
+
+        <td>
+          Expense
+        </td>
+
+        <td>
+          ₹${e.amount || 0}
+        </td>
+
+        <td>
+          -
+        </td>
+
+        <td>
+          -
+        </td>
+
+        <td>
+          ${new Date(e.created_at)
+            .toLocaleDateString()}
+        </td>
+
+        <td style="color:#00ff88;">
+          ₹0
+        </td>
+
+        <td style="color:#ff4444;">
+          ₹${e.amount || 0}
+        </td>
+
+      </tr>
+    `;
+  });
+
+  if (!html) {
+
+    html = `
+      <tr>
+        <td colspan="8"
+        style="padding:20px;text-align:center;">
+          No transactions
+        </td>
+      </tr>
+    `;
+  }
+
+  table.innerHTML = html;
+
+  document.getElementById("totalCredited")
+    .innerText = `₹${credited}`;
+
+  document.getElementById("totalDebited")
+    .innerText = `₹${debited}`;
+
+  document.getElementById("totalProfit")
+    .innerText = `₹${credited - debited}`;
 }
 
-function openExpensePopup() {
+async function openExpensePopup() {
 
-  alert("Expense popup coming next");
+  const title = prompt("Expense Title");
+
+  if (!title) return;
+
+  const amount = prompt("Expense Amount");
+
+  if (!amount) return;
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/add-expense`,
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        username: currentAdminUsername,
+        title,
+        amount
+      })
+    }
+  );
+
+  if (data?.success) {
+
+    alert("Expense Added");
+
+  } else {
+
+    alert("Failed");
+
+  }
+}
+
+function downloadTransactionsPDF() {
+
+  window.print();
 
 }
