@@ -33,6 +33,10 @@ async function adminLogin() {
   if (!data.success || !data.isAdmin) return showMsg("Invalid admin login");
 
   currentAdminUsername = email;
+  localStorage.setItem(
+  "admin_username",
+  email
+);
   document.getElementById("login-panel").style.display = "none";
   document.getElementById("admin-panel").style.display = "block";
   openDashboard(document.querySelector(".menu li"));
@@ -607,11 +611,11 @@ async function openExpensePopup() {
       headers:{
         "Content-Type":"application/json"
       },
-      body:JSON.stringify({
-        username: currentAdminUsername,
-        title,
-        amount
-      })
+     body: JSON.stringify({
+  username: currentAdminUsername,
+  title,
+  amount
+})
     }
   );
 
@@ -621,7 +625,9 @@ async function openExpensePopup() {
 
   } else {
 
-    alert("Failed");
+    alert(
+  data?.error || "Failed to add expense"
+);
 
   }
 }
