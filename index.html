@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zion Admin</title>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",sans-serif; }
+
+body {
+  display:flex;
+  height:100vh;
+  background:#050510;
+  color:white;
+  overflow:hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width:260px;
+  background:rgba(10,10,25,0.85);
+  backdrop-filter:blur(12px);
+  padding:20px;
+}
+
+.logo-text {
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:20px;
+  background:linear-gradient(90deg,#9333ea,#00d4ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.admin-btn {
+  border:1px solid #9333ea;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:20px;
+  text-align:center;
+}
+
+/* MENU */
+.menu li {
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.menu li:hover { background:rgba(255,255,255,0.05); }
+.menu li.active { background:linear-gradient(90deg,#9333ea,#00d4ff); }
+
+/* MAIN */
+.main { flex:1; background:url("bg.jpg") center/cover no-repeat; }
+.content { padding:30px; }
+
+/* CARD */
+.card {
+  background:rgba(20,20,40,0.6);
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:20px;
+}
+
+/* INPUT */
+input, select {
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:8px;
+  border:none;
+  background:#0b0b12;
+  color:white;
+}
+
+/* BUTTON */
+button {
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin-top:10px;
+  cursor:pointer;
+}
+.primary { background:linear-gradient(90deg,#9333ea,#00d4ff); color:white; }
+.danger { background:red; }
+.info { background:#00d4ff; color:black; }
+
+#admin-panel { display:none; }
+#stats-box, #msg-box { margin-top:10px; color:#00d4ff; }
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo-text">ZIONPLAY</div>
+  <div class="admin-btn">ADMIN PANEL</div>
+
+  <ul class="menu">
+    <li onclick="openDashboard(this)" class="active">
+  <div class="icon"></div>Dashboard
+</li>
+    <li onclick="openUsers(this)"><div class="icon"></div>Users</li>
+    <li onclick="openSubscriptions(this)"><div class="icon"></div>Subscriptions</li>
+  </ul>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+<div class="content">
+
+<!-- LOGIN -->
+<div id="login-panel" class="card">
+  <h2>Admin Login</h2>
+  <input id="admin-user" placeholder="Email">
+  <input id="admin-pass" type="password" placeholder="Password">
+  <button class="primary" onclick="adminLogin()">LOGIN</button>
+  <div id="msg-box"></div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+
+  <!-- DASHBOARD -->
+  <div class="card" id="dashboard-page">
+    <h2>Stats</h2>
+    <div id="stats-box">Select range</div>
+
+    <button onclick="loadStats('daily')">Today</button>
+    <button onclick="loadStats('7d')">7 Days</button>
+    <button onclick="loadStats('30d')">30 Days</button>
+  </div>
+
+  <!-- USERS PAGE -->
+  <div class="card" id="users-page" style="display:none;">
+    <h2>Users</h2>
+    <button onclick="loadUsers()">Refresh</button>
+
+    <div style="display:flex; gap:20px;">
+      <div id="userList" style="width:250px;"></div>
+      <div id="userDetails" style="flex:1;">Select a user</div>
+    </div>
+  </div>
+
+  <!-- SUBSCRIPTIONS PAGE -->
+  <div class="card" id="subscriptions-page" style="display:none;">
+    <h2>Subscriptions</h2>
+
+    <button onclick="loadPlans()">Refresh</button>
+
+    <div id="plansList"></div>
+
+    <h3>Add Plan</h3>
+
+    <input id="pname" placeholder="Plan Name">
+    <input id="pprice" type="number" placeholder="Price">
+    <input id="phours" type="number" placeholder="Hours">
+
+    <select id="ptype">
+      <option value="standard">Standard</option>
+      <option value="pass">Pass</option>
+      <option value="gift_card">Gift Card</option>
+    </select>
+
+    <input id="pvalid" type="number" placeholder="Valid Days">
+
+    <button class="primary" onclick="addPlan()">Add Plan</button>
+  </div>
+
+  <!-- USER CONTROL -->
+  <div class="card">
+    <h2>User Control</h2>
+
+    <input id="admin-email" placeholder="User Email">
+    <input id="admin-hrs" type="number" placeholder="Hours">
+    <input id="admin-pts" type="number" placeholder="Points">
+
+    <button class="primary" onclick="adminAddTime()">Add Time</button>
+    <button onclick="generateVouchers()">Generate Vouchers</button>
+    <button class="danger" onclick="toggleMaintenance(true)">Enable Maintenance</button>
+    <button class="info" onclick="toggleMaintenance(false)">Disable Maintenance</button>
+  </div>
+
+</div>
+
+</div>
+</div>
+
+<script src="ui.js"></script>
+
+</body>
+</html>

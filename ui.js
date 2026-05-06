@@ -1,0 +1,264 @@
+const DEFAULT_BACKEND_URL = "https://zion-payment-server-o7p6.onrender.com";
+const BACKEND_URL = (window.__ZION_CONFIG?.BACKEND_URL || DEFAULT_BACKEND_URL).replace(/\/+$/, "");
+let currentAdminUsername = "";
+
+async function safeFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+    if (!res.ok) {
+      const err = await res.json().catch(() => null);
+      return { success: false, error: err?.error || "SERVER_ERROR" };
+    }
+    return await res.json();
+  } catch (err) {
+    return null;
+  }
+}
+
+function showMsg(message) {
+  const box = document.getElementById("msg-box") || document.getElementById("stats-box");
+  if (box) box.innerText = message;
+}
+
+async function adminLogin() {
+  const email = document.getElementById("admin-user").value;
+  const password = document.getElementById("admin-pass").value;
+  const data = await safeFetch(`${BACKEND_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+
+  if (!data) return showMsg("Server offline");
+  if (!data.success || !data.isAdmin) return showMsg("Invalid admin login");
+
+  currentAdminUsername = email;
+  document.getElementById("login-panel").style.display = "none";
+  document.getElementById("admin-panel").style.display = "block";
+  openDashboard(document.querySelector(".menu li"));
+  showMsg("");
+}
+
+async function loadStats(range) {
+  const data = await safeFetch(`${BACKEND_URL}/admin-stats?range=${range}&username=${encodeURIComponent(currentAdminUsername)}`);
+  const box = document.getElementById("stats-box");
+  if (!data) {
+    box.innerText = "Server offline";
+    return;
+  }
+  if (!data.success) {
+    box.innerText = "Failed to load stats";
+    return;
+  }
+  box.innerText =
+    `Revenue: Rs ${data.totalRevenue}\n` +
+    `Orders: ${data.totalOrders}\n` +
+    `Hours Sold: ${data.totalHours}\n` +
+    `Points: ${data.totalPoints}`;
+}
+
+async function adminAddTime() {
+  const email = document.getElementById("admin-email").value;
+  const hrs = parseFloat(document.getElementById("admin-hrs").value) || 0;
+  const pts = parseInt(document.getElementById("admin-pts").value, 10) || 0;
+  if (!email) return showMsg("Enter user email");
+
+  const data = await safeFetch(`${BACKEND_URL}/admin-add`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: currentAdminUsername, email, hrs, pts })
+  });
+
+  showMsg(data?.success ? `Added ${hrs} hrs and ${pts} pts to ${email}` : "Failed. Check email existence.");
+}
+
+async function toggleMaintenance(enabled) {
+  const data = await safeFetch(`${BACKEND_URL}/toggle-maintenance`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: currentAdminUsername, enabled })
+  });
+
+  showMsg(data?.success ? `Maintenance Mode: ${data.maintenanceMode ? "ENABLED" : "DISABLED"}` : "Failed to update maintenance mode");
+}
+
+async function generateVouchers() {
+  const data = await safeFetch(`${BACKEND_URL}/generate-vouchers`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: currentAdminUsername })
+  });
+
+  showMsg(data?.success ? `Generated ${data.count} voucher codes` : (data?.error || "Voucher generation failed"));
+}
+
+// ================= USERS =================
+
+function openUsers(el) {
+  // highlight active menu
+  document.querySelectorAll(".menu li").forEach(li => li.classList.remove("active"));
+  el.classList.add("active");
+
+  // hide all cards inside admin panel
+  document.getElementById("dashboard-page").style.display = "none";
+document.getElementById("users-page").style.display = "none";
+document.getElementById("subscriptions-page").style.display = "none";
+
+  // show users page
+  document.getElementById("users-page").style.display = "block";
+
+  // load users
+  loadUsers();
+}
+
+async function loadUsers() {
+  const box = document.getElementById("userList");
+  box.innerHTML = "Loading...";
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin-users?username=${encodeURIComponent(currentAdminUsername)}`);
+    const data = await res.json();
+
+    if (!data.success) {
+      box.innerHTML = "Failed to load users";
+      return;
+    }
+
+    let html = "";
+
+    data.users.forEach(u => {
+      html += `
+        <div style="
+          padding:10px;
+          margin-bottom:8px;
+          background:#111;
+          border-radius:8px;
+          cursor:pointer;
+        " onclick='showUser(${JSON.stringify(u)})'>
+          ${u.username}
+        </div>
+      `;
+    });
+
+    box.innerHTML = html;
+
+  } catch (err) {
+    console.log(err);
+    box.innerHTML = "Error loading users";
+  }
+}
+
+function showUser(u) {
+  document.getElementById("userDetails").innerHTML = `
+    <h3>${u.username}</h3>
+    <p>Hours: ${u.hours}</p>
+    <p>Points: ${u.pts}</p>
+    <p>Email: ${u.customer_email || "-"}</p>
+    <p>Phone: ${u.customer_phone || "-"}</p>
+  `;
+}
+// ================= SUBSCRIPTIONS =================
+
+function openSubscriptions(el) {
+  // highlight active menu
+  document.querySelectorAll(".menu li").forEach(li => li.classList.remove("active"));
+  el.classList.add("active");
+
+  // hide all cards
+document.getElementById("dashboard-page").style.display = "none";
+document.getElementById("users-page").style.display = "none";
+document.getElementById("subscriptions-page").style.display = "none";
+  // show subscriptions page
+  document.getElementById("subscriptions-page").style.display = "block";
+
+  loadPlans();
+}
+
+async function loadPlans() {
+  const box = document.getElementById("plansList");
+  box.innerHTML = "Loading...";
+
+  const data = await safeFetch(`${BACKEND_URL}/get-prices`);
+
+  if (!data || !data.success) {
+    box.innerHTML = "Failed to load plans";
+    return;
+  }
+
+  let html = "";
+
+  data.prices.forEach(p => {
+    html += `
+      <div style="
+        padding:10px;
+        margin:10px 0;
+        background:#111;
+        border-radius:10px;
+      ">
+        <b>${p.name}</b><br>
+        ₹${p.price} | ${p.hours} hrs<br>
+        Type: ${p.type}<br>
+        Valid: ${p.valid_days || 0} days<br>
+
+        <button onclick="deletePlan(${p.id})">Delete</button>
+      </div>
+    `;
+  });
+
+  box.innerHTML = html;
+}
+
+async function addPlan() {
+  const plan = {
+    name: document.getElementById("pname").value,
+    price: Number(document.getElementById("pprice").value),
+    hours: Number(document.getElementById("phours").value),
+    type: document.getElementById("ptype").value,
+    valid_days: Number(document.getElementById("pvalid").value) || 0
+  };
+
+  const data = await safeFetch(`${BACKEND_URL}/add-price`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+  username: currentAdminUsername,
+  ...plan
+})
+  });
+
+  if (data?.success) {
+    loadPlans();
+  } else {
+    alert("Failed to add plan");
+  }
+}
+
+async function deletePlan(id) {
+  if (!confirm("Delete this plan?")) return;
+
+  const data = await safeFetch(`${BACKEND_URL}/delete-price`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+  username: currentAdminUsername,
+  id
+})
+  });
+
+  if (data?.success) {
+    loadPlans();
+  } else {
+    alert("Delete failed");
+  }
+}
+
+// ================= DASHBOARD =================
+function openDashboard(el){
+  document.querySelectorAll(".menu li").forEach(li => li.classList.remove("active"));
+  el.classList.add("active");
+
+document.getElementById("dashboard-page").style.display = "none";
+document.getElementById("users-page").style.display = "none";
+document.getElementById("subscriptions-page").style.display = "none";
+  document.getElementById("dashboard-page").style.display = "block";
+}
