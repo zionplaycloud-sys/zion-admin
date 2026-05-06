@@ -105,6 +105,7 @@ document.getElementById("dashboard-controls").style.display = "none";
 document.getElementById("users-page").style.display = "none";
 document.getElementById("subscriptions-page").style.display = "none";
 document.getElementById("games-page").style.display = "none";
+document.getElementById("transactions-page").style.display = "none";
 
   // show users page
   document.getElementById("users-page").style.display = "block";
@@ -172,6 +173,7 @@ document.getElementById("dashboard-controls").style.display = "none";
 document.getElementById("users-page").style.display = "none";
 document.getElementById("subscriptions-page").style.display = "none";
 document.getElementById("games-page").style.display = "none";
+document.getElementById("transactions-page").style.display = "none";
   // show subscriptions page
   document.getElementById("subscriptions-page").style.display = "block";
 
@@ -274,6 +276,8 @@ function openDashboard(el){
   document.getElementById("subscriptions-page").style.display = "none";
 
   document.getElementById("games-page").style.display = "none";
+
+  document.getElementById("transactions-page").style.display = "none";
 }
 
 
@@ -294,7 +298,11 @@ function openGames(el) {
 
   document.getElementById("subscriptions-page").style.display = "none";
 
+  document.getElementById("transactions-page").style.display = "none";
+
+
   document.getElementById("games-page").style.display = "block";
+
 
   loadGamesAdmin();
 }
@@ -408,4 +416,69 @@ async function deleteGame(id) {
   if (data?.success) {
     loadGamesAdmin();
   }
+}
+
+function openTransactions(el) {
+
+  document.querySelectorAll(".menu li")
+    .forEach(li => li.classList.remove("active"));
+
+  el.classList.add("active");
+
+  document.getElementById("dashboard-page").style.display = "none";
+
+  document.getElementById("dashboard-controls").style.display = "none";
+
+  document.getElementById("users-page").style.display = "none";
+
+  document.getElementById("subscriptions-page").style.display = "none";
+
+  document.getElementById("games-page").style.display = "none";
+
+  document.getElementById("transactions-page").style.display = "block";
+
+  loadTransactions("today");
+}
+
+async function loadTransactions(range) {
+
+  const table = document.getElementById("transactionsTable");
+
+  table.innerHTML = `
+    <tr>
+      <td colspan="6" style="padding:20px; text-align:center;">
+        Loading...
+      </td>
+    </tr>
+  `;
+
+  // placeholder UI only for now
+
+  setTimeout(() => {
+
+    table.innerHTML = `
+      <tr>
+
+        <td style="padding:12px;">john</td>
+
+        <td>Payment</td>
+
+        <td>₹499</td>
+
+        <td>8h</td>
+
+        <td>49</td>
+
+        <td>2026-05-06</td>
+
+      </tr>
+    `;
+
+  }, 500);
+}
+
+function openExpensePopup() {
+
+  alert("Expense popup coming next");
+
 }

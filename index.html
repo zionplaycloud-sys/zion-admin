@@ -127,6 +127,10 @@ button {
 <div class="icon"></div>Games
 </li>
 
+<li onclick="openTransactions(this)">
+<div class="icon"></div>Transactions
+</li>
+
 </ul>
 </div>
 
@@ -243,6 +247,93 @@ button {
     grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
     gap:15px;
   "></div>
+
+</div>
+<!-- TRANSACTIONS PAGE -->
+<div class="card" id="transactions-page" style="display:none;">
+
+  <h2>Transactions</h2>
+
+  <!-- FILTERS -->
+  <div style="
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+  ">
+
+    <button onclick="loadTransactions('today')">Today</button>
+
+    <button onclick="loadTransactions('7d')">7 Days</button>
+
+    <button onclick="loadTransactions('1m')">1 Month</button>
+
+    <button onclick="loadTransactions('3m')">3 Month</button>
+
+    <button onclick="loadTransactions('6m')">6 Month</button>
+
+    <button onclick="loadTransactions('12m')">12 Month</button>
+
+  </div>
+
+  <!-- ACTIONS -->
+  <div style="
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+  ">
+
+    <button class="primary" onclick="openExpensePopup()">
+      + Add Expense
+    </button>
+
+    <button class="info">
+      Download PDF
+    </button>
+
+  </div>
+
+  <!-- TABLE -->
+  <div style="overflow-x:auto;">
+
+    <table style="
+      width:100%;
+      border-collapse:collapse;
+    ">
+
+      <thead>
+
+        <tr style="background:rgba(255,255,255,0.05);">
+
+          <th style="padding:12px;">User</th>
+
+          <th>Type</th>
+
+          <th>Amount</th>
+
+          <th>Hours</th>
+
+          <th>Points</th>
+
+          <th>Date</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="transactionsTable">
+
+        <tr>
+          <td colspan="6" style="padding:20px; text-align:center;">
+            No transactions
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
 
 </div>
 
