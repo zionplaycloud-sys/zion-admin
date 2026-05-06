@@ -131,6 +131,10 @@ button {
 <div class="icon"></div>Transactions
 </li>
 
+<li onclick="openServers(this)">
+  Servers
+</li>
+
 </ul>
 </div>
 
@@ -249,6 +253,31 @@ button {
   "></div>
 
 </div>
+
+<!-- SERVERS PAGE -->
+<div class="card"
+id="servers-page"
+style="display:none;">
+
+  <h2>Servers</h2>
+
+  <button onclick="loadServers()">
+    Refresh
+  </button>
+
+  <div id="serversGrid"
+  style="
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fill,minmax(280px,1fr));
+    gap:20px;
+    margin-top:20px;
+  ">
+
+  </div>
+
+</div>
+
 <!-- TRANSACTIONS PAGE -->
 <div class="card" id="transactions-page" style="display:none;">
 
@@ -275,6 +304,8 @@ button {
     <button onclick="loadTransactions('12m')">12 Month</button>
 
   </div>
+
+  
 
   <!-- ACTIONS -->
   <div style="

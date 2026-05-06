@@ -110,6 +110,7 @@ document.getElementById("users-page").style.display = "none";
 document.getElementById("subscriptions-page").style.display = "none";
 document.getElementById("games-page").style.display = "none";
 document.getElementById("transactions-page").style.display = "none";
+document.getElementById("servers-page").style.display = "none";
 
   // show users page
   document.getElementById("users-page").style.display = "block";
@@ -178,6 +179,7 @@ document.getElementById("users-page").style.display = "none";
 document.getElementById("subscriptions-page").style.display = "none";
 document.getElementById("games-page").style.display = "none";
 document.getElementById("transactions-page").style.display = "none";
+document.getElementById("servers-page").style.display = "none";
   // show subscriptions page
   document.getElementById("subscriptions-page").style.display = "block";
 
@@ -282,6 +284,8 @@ function openDashboard(el){
   document.getElementById("games-page").style.display = "none";
 
   document.getElementById("transactions-page").style.display = "none";
+
+  document.getElementById("servers-page").style.display = "none";
 }
 
 
@@ -304,6 +308,7 @@ function openGames(el) {
 
   document.getElementById("transactions-page").style.display = "none";
 
+  document.getElementById("servers-page").style.display = "none";
 
   document.getElementById("games-page").style.display = "block";
 
@@ -422,6 +427,33 @@ async function deleteGame(id) {
   }
 }
 
+// ================= SERVERS =================
+
+function openServers(el) {
+
+  document.querySelectorAll(".menu li")
+    .forEach(li => li.classList.remove("active"));
+
+  el.classList.add("active");
+
+  document.getElementById("dashboard-page").style.display = "none";
+
+  document.getElementById("dashboard-controls").style.display = "none";
+
+  document.getElementById("users-page").style.display = "none";
+
+  document.getElementById("subscriptions-page").style.display = "none";
+
+  document.getElementById("games-page").style.display = "none";
+
+  document.getElementById("transactions-page").style.display = "none";
+
+  document.getElementById("servers-page").style.display = "block";
+
+  loadServers();
+}
+
+
 function openTransactions(el) {
 
   document.querySelectorAll(".menu li")
@@ -438,6 +470,8 @@ function openTransactions(el) {
   document.getElementById("subscriptions-page").style.display = "none";
 
   document.getElementById("games-page").style.display = "none";
+
+  document.getElementById("servers-page").style.display = "none";
 
   document.getElementById("transactions-page").style.display = "block";
 
@@ -618,18 +652,103 @@ async function openExpensePopup() {
 })
     }
   );
+if (data?.success) {
 
-  if (data?.success) {
+  alert("Expense Added");
 
-    alert("Expense Added");
+  loadTransactions("today");
 
-  } else {
+} else {
 
     alert(
   data?.error || "Failed to add expense"
 );
 
   }
+}
+
+async function loadServers() {
+
+  const grid = document.getElementById("serversGrid");
+
+  grid.innerHTML = "Loading...";
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/admin-pcs?username=${encodeURIComponent(currentAdminUsername)}`
+  );
+
+  if (!data || !data.success) {
+
+    grid.innerHTML = "Failed to load servers";
+
+    return;
+  }
+
+  let html = "";
+
+  data.pcs.forEach(pc => {
+
+    const statusColor =
+      pc.status === "online"
+      ? "#00ff88"
+      : pc.status === "busy"
+      ? "#ffaa00"
+      : "#ff4444";
+
+    html += `
+      <div style="
+        background:rgba(0,0,0,0.5);
+        border-radius:16px;
+        padding:20px;
+        border:1px solid ${statusColor};
+        box-shadow:0 0 20px ${statusColor}33;
+      ">
+
+        <h3>
+          ${pc.name || "PC"}
+        </h3>
+
+        <p style="color:${statusColor};">
+          ${pc.status || "offline"}
+        </p>
+
+        <br>
+
+        <p>
+          GPU:
+          ${pc.gpu || "RTX"}
+        </p>
+
+        <p>
+          RAM:
+          ${pc.ram || "32GB"}
+        </p>
+
+        <p>
+          User:
+          ${pc.current_user || "-"}
+        </p>
+
+        <p>
+          Game:
+          ${pc.current_game || "-"}
+        </p>
+
+        <br>
+
+        <button class="info">
+          Restart
+        </button>
+
+        <button class="danger">
+          Shutdown
+        </button>
+
+      </div>
+    `;
+  });
+
+  grid.innerHTML = html;
 }
 
 function downloadTransactionsPDF() {
