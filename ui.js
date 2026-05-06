@@ -101,6 +101,7 @@ function openUsers(el) {
 
   // hide all cards inside admin panel
 document.getElementById("dashboard-page").style.display = "none";
+document.getElementById("dashboard-controls").style.display = "none";
 document.getElementById("users-page").style.display = "none";
 document.getElementById("subscriptions-page").style.display = "none";
 document.getElementById("games-page").style.display = "none";
@@ -167,6 +168,7 @@ function openSubscriptions(el) {
 
   // hide all cards
 document.getElementById("dashboard-page").style.display = "none";
+document.getElementById("dashboard-controls").style.display = "none";
 document.getElementById("users-page").style.display = "none";
 document.getElementById("subscriptions-page").style.display = "none";
 document.getElementById("games-page").style.display = "none";
@@ -265,6 +267,8 @@ function openDashboard(el){
 
   document.getElementById("dashboard-page").style.display = "block";
 
+  document.getElementById("dashboard-controls").style.display = "block";
+
   document.getElementById("users-page").style.display = "none";
 
   document.getElementById("subscriptions-page").style.display = "none";
@@ -283,6 +287,8 @@ function openGames(el) {
   el.classList.add("active");
 
   document.getElementById("dashboard-page").style.display = "none";
+
+  document.getElementById("dashboard-controls").style.display = "none";
 
   document.getElementById("users-page").style.display = "none";
 

@@ -23,6 +23,8 @@ body {
   background:rgba(10,10,25,0.85);
   backdrop-filter:blur(12px);
   padding:20px;
+  overflow-y:auto;
+  height:100vh;
 }
 
 .logo-text {
@@ -59,7 +61,10 @@ body {
   overflow-y:auto;
   height:100vh;
 }
-.content { padding:30px; }
+.content {
+  padding:30px;
+  min-height:100vh;
+}
 
 /* CARD */
 .card {
@@ -141,59 +146,85 @@ button {
 <!-- ADMIN PANEL -->
 <div id="admin-panel">
 
-  <!-- DASHBOARD -->
-  <div class="card" id="dashboard-page">
+<!-- DASHBOARD -->
+<div id="dashboard-page">
+
+  <!-- STATS -->
+  <div class="card">
+
     <h2>Stats</h2>
+
     <div id="stats-box">Select range</div>
 
     <button onclick="loadStats('daily')">Today</button>
     <button onclick="loadStats('7d')">7 Days</button>
     <button onclick="loadStats('30d')">30 Days</button>
+
   </div>
 
-  <!-- USERS PAGE -->
-  <div class="card" id="users-page" style="display:none;">
-    <h2>Users</h2>
-    <button onclick="loadUsers()">Refresh</button>
+</div>
 
-    <div style="display:flex; gap:20px;">
-      <div id="userList" style="width:250px;"></div>
-      <div id="userDetails" style="flex:1;">Select a user</div>
+<!-- USERS PAGE -->
+<div class="card" id="users-page" style="display:none;">
+
+  <h2>Users</h2>
+
+  <button onclick="loadUsers()">Refresh</button>
+
+  <div style="display:flex; gap:20px;">
+
+    <div id="userList" style="width:250px;"></div>
+
+    <div id="userDetails" style="flex:1;">
+      Select a user
     </div>
+
   </div>
 
-  <!-- SUBSCRIPTIONS PAGE -->
-  <div class="card" id="subscriptions-page" style="display:none;">
-    <h2>Subscriptions</h2>
+</div>
 
-    <button onclick="loadPlans()">Refresh</button>
+<!-- SUBSCRIPTIONS PAGE -->
+<div class="card" id="subscriptions-page" style="display:none;">
 
-    <div id="plansList"></div>
+  <h2>Subscriptions</h2>
 
-    <h3>Add Plan</h3>
+  <button onclick="loadPlans()">Refresh</button>
 
-    <input id="pname" placeholder="Plan Name">
-    <input id="pprice" type="number" placeholder="Price">
-    <input id="phours" type="number" placeholder="Hours">
+  <div id="plansList"></div>
 
-    <select id="ptype">
-      <option value="standard">Standard</option>
-      <option value="pass">Pass</option>
-      <option value="gift_card">Gift Card</option>
-    </select>
+  <h3>Add Plan</h3>
 
-    <input id="pvalid" type="number" placeholder="Valid Days">
+  <input id="pname" placeholder="Plan Name">
 
-    <button class="primary" onclick="addPlan()">Add Plan</button>
-  </div>
+  <input id="pprice" type="number" placeholder="Price">
 
-  <!-- USER CONTROL -->
+  <input id="phours" type="number" placeholder="Hours">
 
-    <div class="card" id="games-page" style="display:none;">
+  <select id="ptype">
+    <option value="standard">Standard</option>
+    <option value="pass">Pass</option>
+    <option value="gift_card">Gift Card</option>
+  </select>
+
+  <input id="pvalid" type="number" placeholder="Valid Days">
+
+  <button class="primary" onclick="addPlan()">
+    Add Plan
+  </button>
+
+</div>
+
+<!-- GAMES PAGE -->
+<div class="card" id="games-page" style="display:none;">
 
   <h2>Games</h2>
 
-  <div style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
+  <div style="
+    margin-bottom:20px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  ">
 
     <input id="game-name" placeholder="Game Name">
 
@@ -214,23 +245,43 @@ button {
   "></div>
 
 </div>
-<div class="card">
+
+<!-- DASHBOARD CONTROLS -->
+<div id="dashboard-controls">
+
+  <!-- USER CONTROL -->
+  <div class="card">
 
     <h2>User Control</h2>
 
     <input id="admin-email" placeholder="User Email">
+
     <input id="admin-hrs" type="number" placeholder="Hours">
+
     <input id="admin-pts" type="number" placeholder="Points">
 
-    <button class="primary" onclick="adminAddTime()">Add Time</button>
-    <button onclick="generateVouchers()">Generate Vouchers</button>
-    <button class="danger" onclick="toggleMaintenance(true)">Enable Maintenance</button>
-    <button class="info" onclick="toggleMaintenance(false)">Disable Maintenance</button>
+    <button class="primary" onclick="adminAddTime()">
+      Add Time
+    </button>
+
+    <button onclick="generateVouchers()">
+      Generate Vouchers
+    </button>
+
+    <button class="danger" onclick="toggleMaintenance(true)">
+      Enable Maintenance
+    </button>
+
+    <button class="info" onclick="toggleMaintenance(false)">
+      Disable Maintenance
+    </button>
+
   </div>
 
 </div>
 
 </div>
+
 </div>
 
 <script src="ui.js"></script>
