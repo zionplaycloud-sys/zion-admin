@@ -134,6 +134,13 @@ button {
 <li onclick="openServers(this)">
   Servers
 </li>
+<li onclick="openReports(this)">
+  Reports
+</li>
+
+<li onclick="openSupport(this)">
+  Support
+</li>
 
 </ul>
 </div>
@@ -277,6 +284,75 @@ style="display:none;">
   </div>
 
 </div>
+<!-- REPORTS PAGE -->
+<div class="card"
+id="reports-page"
+style="display:none;">
+
+  <h2>Reports</h2>
+
+  <button onclick="loadReports()">
+    Refresh
+  </button>
+
+  <div id="reportsList"
+  style="margin-top:20px;">
+
+  </div>
+
+</div>
+<!-- SUPPORT PAGE -->
+<div class="card"
+id="support-page"
+style="display:none;">
+
+  <h2>Support Status</h2>
+
+  <div style="
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:20px;
+  ">
+
+    <button
+      class="primary"
+      onclick="updateAdminStatus('online')">
+
+      🟢 Online
+
+    </button>
+
+    <button
+      style="
+        background:#ffaa00;
+        color:black;
+      "
+      onclick="updateAdminStatus('busy')">
+
+      🟡 Busy
+
+    </button>
+
+    <button
+      class="danger"
+      onclick="updateAdminStatus('offline')">
+
+      🔴 Offline
+
+    </button>
+
+  </div>
+
+  <div
+    id="supportStatusBox"
+    style="margin-top:30px;">
+
+    Loading...
+
+  </div>
+
+</div>  
 
 <!-- TRANSACTIONS PAGE -->
 <div class="card" id="transactions-page" style="display:none;">

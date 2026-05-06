@@ -286,6 +286,10 @@ function openDashboard(el){
   document.getElementById("transactions-page").style.display = "none";
 
   document.getElementById("servers-page").style.display = "none";
+
+  document.getElementById("reports-page").style.display = "none";
+
+  document.getElementById("support-page").style.display = "none";
 }
 
 
@@ -309,6 +313,10 @@ function openGames(el) {
   document.getElementById("transactions-page").style.display = "none";
 
   document.getElementById("servers-page").style.display = "none";
+
+  document.getElementById("reports-page").style.display = "none";
+
+  document.getElementById("support-page").style.display = "none";
 
   document.getElementById("games-page").style.display = "block";
 
@@ -427,6 +435,66 @@ async function deleteGame(id) {
   }
 }
 
+// ================= REPORTS =================
+
+function openReports(el) {
+
+  document.querySelectorAll(".menu li")
+    .forEach(li => li.classList.remove("active"));
+
+  el.classList.add("active");
+
+  document.getElementById("dashboard-page").style.display = "none";
+
+  document.getElementById("dashboard-controls").style.display = "none";
+
+  document.getElementById("users-page").style.display = "none";
+
+  document.getElementById("subscriptions-page").style.display = "none";
+
+  document.getElementById("games-page").style.display = "none";
+
+  document.getElementById("transactions-page").style.display = "none";
+
+  document.getElementById("servers-page").style.display = "none";
+
+  document.getElementById("support-page").style.display = "none";
+
+  document.getElementById("reports-page").style.display = "block";
+
+  loadReports();
+}
+
+// ================= SUPPORT =================
+
+function openSupport(el) {
+
+  document.querySelectorAll(".menu li")
+    .forEach(li => li.classList.remove("active"));
+
+  el.classList.add("active");
+
+  document.getElementById("dashboard-page").style.display = "none";
+
+  document.getElementById("dashboard-controls").style.display = "none";
+
+  document.getElementById("users-page").style.display = "none";
+
+  document.getElementById("subscriptions-page").style.display = "none";
+
+  document.getElementById("games-page").style.display = "none";
+
+  document.getElementById("transactions-page").style.display = "none";
+
+  document.getElementById("servers-page").style.display = "none";
+
+  document.getElementById("reports-page").style.display = "none";
+
+  document.getElementById("support-page").style.display = "block";
+
+  loadSupportStatus();
+}
+
 // ================= SERVERS =================
 
 function openServers(el) {
@@ -447,6 +515,10 @@ function openServers(el) {
   document.getElementById("games-page").style.display = "none";
 
   document.getElementById("transactions-page").style.display = "none";
+
+  document.getElementById("reports-page").style.display = "none";
+
+  document.getElementById("support-page").style.display = "none";
 
   document.getElementById("servers-page").style.display = "block";
 
@@ -472,6 +544,10 @@ function openTransactions(el) {
   document.getElementById("games-page").style.display = "none";
 
   document.getElementById("servers-page").style.display = "none";
+
+  document.getElementById("reports-page").style.display = "none";
+
+  document.getElementById("support-page").style.display = "none";
 
   document.getElementById("transactions-page").style.display = "block";
 
@@ -749,6 +825,228 @@ async function loadServers() {
   });
 
   grid.innerHTML = html;
+}
+
+async function loadReports() {
+
+  const box =
+    document.getElementById("reportsList");
+
+  box.innerHTML = "Loading...";
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/admin-reports?username=${encodeURIComponent(currentAdminUsername)}`
+  );
+
+  if (!data || !data.success) {
+
+    box.innerHTML =
+      "Failed to load reports";
+
+    return;
+  }
+
+  let html = "";
+
+  data.reports.forEach(r => {
+
+    const color =
+      r.status === "resolved"
+      ? "#00ff88"
+      : r.status === "investigating"
+      ? "#ffaa00"
+      : "#ff4444";
+
+    html += `
+      <div style="
+        background:rgba(0,0,0,0.4);
+        border-left:4px solid ${color};
+        padding:20px;
+        border-radius:12px;
+        margin-bottom:15px;
+      ">
+
+        <h3>
+          ${r.title || "No Title"}
+        </h3>
+
+        <br>
+
+        <p>
+          <b>User:</b>
+          ${r.username || "-"}
+        </p>
+
+        <p>
+          <b>Category:</b>
+          ${r.category || "Other"}
+        </p>
+
+        <p>
+          <b>Status:</b>
+          <span style="color:${color}">
+            ${r.status || "open"}
+          </span>
+        </p>
+
+        <br>
+
+        <p>
+          ${r.description || "-"}
+        </p>
+
+        <br>
+
+        <button
+          class="info"
+          onclick="updateReportStatus(${r.id}, 'investigating')">
+
+          Investigating
+
+        </button>
+
+        <button
+          class="primary"
+          onclick="updateReportStatus(${r.id}, 'resolved')">
+
+          Resolve
+
+        </button>
+
+      </div>
+    `;
+  });
+
+  if (!html) {
+    html = "No reports";
+  }
+
+  box.innerHTML = html;
+}
+async function updateReportStatus(
+  id,
+  status
+) {
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/update-report-status`,
+    {
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        username: currentAdminUsername,
+        id,
+        status
+      })
+    }
+  );
+
+  if (data?.success) {
+
+    loadReports();
+
+  } else {
+
+    alert("Failed");
+
+  }
+}
+
+async function loadSupportStatus() {
+
+  const box =
+    document.getElementById("supportStatusBox");
+
+  box.innerHTML = "Loading...";
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/support-status`
+  );
+
+  if (!data || !data.success) {
+
+    box.innerHTML =
+      "Failed to load support status";
+
+    return;
+  }
+
+  let html = "";
+
+  data.admins.forEach(admin => {
+
+    const color =
+      admin.status === "online"
+      ? "#00ff88"
+      : admin.status === "busy"
+      ? "#ffaa00"
+      : "#ff4444";
+
+    html += `
+      <div style="
+        background:rgba(0,0,0,0.4);
+        border-left:4px solid ${color};
+        padding:20px;
+        border-radius:12px;
+        margin-bottom:15px;
+      ">
+
+        <h3>
+          ${admin.username}
+        </h3>
+
+        <p style="color:${color};">
+          ${admin.status}
+        </p>
+
+        <p>
+          Last Seen:
+          ${new Date(admin.last_seen)
+            .toLocaleString()}
+        </p>
+
+      </div>
+    `;
+  });
+
+  if (!html) {
+    html = "No admins found";
+  }
+
+  box.innerHTML = html;
+}
+
+async function updateAdminStatus(status) {
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/update-admin-status`,
+    {
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        username: currentAdminUsername,
+        status
+      })
+    }
+  );
+
+  if (data?.success) {
+
+    loadSupportStatus();
+
+  } else {
+
+    alert("Failed");
+
+  }
 }
 
 function downloadTransactionsPDF() {
