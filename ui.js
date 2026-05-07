@@ -1273,6 +1273,15 @@ async function loadReports() {
   let html = "";
 
   data.reports.forEach(r => {
+    if (r.status === "open") {
+
+  addNotification(
+    "New Report",
+    `${r.username} submitted: ${r.title}`,
+    "#ff4444"
+  );
+
+}
 
    const color =
   r.status === "closed"
