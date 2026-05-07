@@ -126,6 +126,7 @@ document.getElementById("reports-page").style.display = "none";
 document.getElementById("support-page").style.display = "none";
 document.getElementById("vouchers-page").style.display = "none";
 document.getElementById("analytics-page").style.display = "none";
+document.getElementById("settings-page").style.display = "none";
 
 
   // show users page
@@ -216,6 +217,7 @@ document.getElementById("reports-page").style.display = "none";
 document.getElementById("support-page").style.display = "none";
 document.getElementById("vouchers-page").style.display = "none";
 document.getElementById("analytics-page").style.display = "none";
+document.getElementById("settings-page").style.display = "none";
 
   // show subscriptions page
   document.getElementById("subscriptions-page").style.display = "block";
@@ -325,7 +327,7 @@ function openDashboard(el){
   document.getElementById("servers-page").style.display = "none";
 
   document.getElementById("reports-page").style.display = "none";
-
+document.getElementById("settings-page").style.display = "none";
   document.getElementById("support-page").style.display = "none";
 
   document.getElementById("vouchers-page").style.display = "none";
@@ -352,7 +354,7 @@ function openGames(el) {
   document.getElementById("subscriptions-page").style.display = "none";
 
   document.getElementById("transactions-page").style.display = "none";
-
+document.getElementById("settings-page").style.display = "none";
   document.getElementById("servers-page").style.display = "none";
 
   document.getElementById("reports-page").style.display = "none";
@@ -500,7 +502,7 @@ function openReports(el) {
   document.getElementById("games-page").style.display = "none";
 
   document.getElementById("transactions-page").style.display = "none";
-
+document.getElementById("settings-page").style.display = "none";
   document.getElementById("servers-page").style.display = "none";
 
   document.getElementById("support-page").style.display = "none";
@@ -553,6 +555,9 @@ el.classList.add("active");
   ).style.display = "none";
 
   document.getElementById("analytics-page").style.display = "none";
+
+  document.getElementById("settings-page").style.display = "none";
+
 
   document.getElementById(
     "vouchers-page"
@@ -749,6 +754,7 @@ function openSupport(el) {
 
   document.getElementById("vouchers-page").style.display = "none";
 document.getElementById("analytics-page").style.display = "none";
+document.getElementById("settings-page").style.display = "none";
 
 
   document.getElementById("support-page").style.display = "block";
@@ -917,6 +923,7 @@ function openServers(el) {
 
   document.getElementById("vouchers-page").style.display = "none";
 document.getElementById("analytics-page").style.display = "none";
+document.getElementById("settings-page").style.display = "none";
 
 
   document.getElementById("servers-page").style.display = "block";
@@ -950,7 +957,7 @@ function openTransactions(el) {
 document.getElementById("analytics-page").style.display = "none";
 
   document.getElementById("vouchers-page").style.display = "none";
-
+document.getElementById("settings-page").style.display = "none";
 
   document.getElementById("transactions-page").style.display = "block";
 
@@ -1253,12 +1260,12 @@ async function loadReports() {
 
   data.reports.forEach(r => {
 
-    const color =
-      r.status === "resolved"
-      ? "#00ff88"
-      : r.status === "investigating"
-      ? "#ffaa00"
-      : "#ff4444";
+   const color =
+  r.status === "closed"
+  ? "#00ff88"
+  : r.status === "investigating"
+  ? "#ffaa00"
+  : "#ff4444";
 
     html += `
       <div style="
@@ -1308,13 +1315,13 @@ async function loadReports() {
 
         </button>
 
-        <button
-          class="primary"
-          onclick="updateReportStatus(${r.id}, 'resolved')">
+      <button
+  class="primary"
+  onclick="updateReportStatus(${r.id}, 'closed')">
 
-          Resolve
+  Close
 
-        </button>
+</button>
 
       </div>
     `;
@@ -1455,5 +1462,153 @@ async function updateAdminStatus(status) {
 function downloadTransactionsPDF() {
 
   window.print();
+
+}
+
+// ================= SETTINGS =================
+
+function openSettings(el) {
+
+  document.querySelectorAll(".menu li")
+    .forEach(li =>
+      li.classList.remove("active")
+    );
+
+  el.classList.add("active");
+
+  [
+    "dashboard-page",
+    "users-page",
+    "subscriptions-page",
+    "games-page",
+    "transactions-page",
+    "reports-page",
+    "support-page",
+    "vouchers-page",
+    "servers-page",
+    "analytics-page"
+  ].forEach(id => {
+
+    const page =
+      document.getElementById(id);
+
+    if (page) {
+      page.style.display = "none";
+    }
+
+  });
+
+  document.getElementById(
+    "dashboard-controls"
+  ).style.display = "none";
+
+  document.getElementById(
+    "settings-page"
+  ).style.display = "block";
+
+}
+
+// ================= SAVE PLATFORM =================
+
+async function savePlatformSettings() {
+
+  const enabled =
+    document.getElementById(
+      "setMaintenance"
+    ).value === "true";
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/toggle-maintenance`,
+    {
+      method:"POST",
+
+      headers:{
+        "Content-Type":
+        "application/json"
+      },
+
+      body:JSON.stringify({
+        enabled
+      })
+    }
+  );
+
+  if (data?.success) {
+
+    alert(
+      "Platform settings saved"
+    );
+
+  } else {
+
+    alert("Failed");
+
+  }
+
+}
+
+// ================= SAVE LINKS =================
+
+function saveLinksSettings() {
+
+  const discord =
+    document.getElementById(
+      "setDiscord"
+    ).value;
+
+  const website =
+    document.getElementById(
+      "setWebsite"
+    ).value;
+
+  const support =
+    document.getElementById(
+      "setSupport"
+    ).value;
+
+  localStorage.setItem(
+    "zp_discord",
+    discord
+  );
+
+  localStorage.setItem(
+    "zp_website",
+    website
+  );
+
+  localStorage.setItem(
+    "zp_support",
+    support
+  );
+
+  alert("Links saved");
+
+}
+
+// ================= SAVE STREAM SETTINGS =================
+
+function saveStreamSettings() {
+
+  const streamUrl =
+    document.getElementById(
+      "setStreamUrl"
+    ).value;
+
+  const agentUrl =
+    document.getElementById(
+      "setAgentUrl"
+    ).value;
+
+  localStorage.setItem(
+    "zp_stream_url",
+    streamUrl
+  );
+
+  localStorage.setItem(
+    "zp_agent_url",
+    agentUrl
+  );
+
+  alert("Streaming settings saved");
 
 }
