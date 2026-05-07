@@ -127,6 +127,7 @@ document.getElementById("support-page").style.display = "none";
 document.getElementById("vouchers-page").style.display = "none";
 document.getElementById("analytics-page").style.display = "none";
 document.getElementById("settings-page").style.display = "none";
+document.getElementById("notifications-page").style.display = "none";
 
 
   // show users page
@@ -218,6 +219,7 @@ document.getElementById("support-page").style.display = "none";
 document.getElementById("vouchers-page").style.display = "none";
 document.getElementById("analytics-page").style.display = "none";
 document.getElementById("settings-page").style.display = "none";
+document.getElementById("notifications-page").style.display = "none";
 
   // show subscriptions page
   document.getElementById("subscriptions-page").style.display = "block";
@@ -321,7 +323,7 @@ function openDashboard(el){
   document.getElementById("subscriptions-page").style.display = "none";
 
   document.getElementById("games-page").style.display = "none";
-
+  document.getElementById("notifications-page").style.display = "none";
   document.getElementById("transactions-page").style.display = "none";
 
   document.getElementById("servers-page").style.display = "none";
@@ -333,6 +335,7 @@ document.getElementById("settings-page").style.display = "none";
   document.getElementById("vouchers-page").style.display = "none";
 
   document.getElementById("analytics-page").style.display = "none";
+  document.getElementById("notifications-page").style.display = "none";
 }
 
 
@@ -364,6 +367,8 @@ document.getElementById("settings-page").style.display = "none";
   document.getElementById("vouchers-page").style.display = "none";
 
   document.getElementById("analytics-page").style.display = "none";
+
+    document.getElementById("notifications-page").style.display = "none";
 
   document.getElementById("games-page").style.display = "block";
 
@@ -501,6 +506,8 @@ function openReports(el) {
 
   document.getElementById("games-page").style.display = "none";
 
+    document.getElementById("notifications-page").style.display = "none";
+
   document.getElementById("transactions-page").style.display = "none";
 document.getElementById("settings-page").style.display = "none";
   document.getElementById("servers-page").style.display = "none";
@@ -553,6 +560,8 @@ el.classList.add("active");
   document.getElementById(
     "support-page"
   ).style.display = "none";
+
+  document.getElementById("notifications-page").style.display = "none";
 
   document.getElementById("analytics-page").style.display = "none";
 
@@ -743,7 +752,7 @@ function openSupport(el) {
   document.getElementById("users-page").style.display = "none";
 
   document.getElementById("subscriptions-page").style.display = "none";
-
+  document.getElementById("notifications-page").style.display = "none";
   document.getElementById("games-page").style.display = "none";
 
   document.getElementById("transactions-page").style.display = "none";
@@ -797,6 +806,10 @@ function openAnalytics(el) {
     "dashboard-controls"
   ).style.display = "none";
 
+  document.getElementById(
+    "notifications-page"
+  ).style.display = "none";
+document.getElementById("settings-page").style.display = "none";
   document.getElementById(
     "analytics-page"
   ).style.display = "block";
@@ -908,6 +921,7 @@ function openServers(el) {
   document.getElementById("dashboard-page").style.display = "none";
 
   document.getElementById("dashboard-controls").style.display = "none";
+    document.getElementById("notifications-page").style.display = "none";
 
   document.getElementById("users-page").style.display = "none";
 
@@ -924,7 +938,7 @@ function openServers(el) {
   document.getElementById("vouchers-page").style.display = "none";
 document.getElementById("analytics-page").style.display = "none";
 document.getElementById("settings-page").style.display = "none";
-
+document.getElementById("notifications-page").style.display = "none";
 
   document.getElementById("servers-page").style.display = "block";
 
@@ -942,7 +956,7 @@ function openTransactions(el) {
   document.getElementById("dashboard-page").style.display = "none";
 
   document.getElementById("dashboard-controls").style.display = "none";
-
+  document.getElementById("notifications-page").style.display = "none";
   document.getElementById("users-page").style.display = "none";
 
   document.getElementById("subscriptions-page").style.display = "none";
@@ -1502,6 +1516,8 @@ function openSettings(el) {
     "dashboard-controls"
   ).style.display = "none";
 
+  document.getElementById("notifications-page").style.display = "none";
+
   document.getElementById(
     "settings-page"
   ).style.display = "block";
@@ -1610,5 +1626,151 @@ function saveStreamSettings() {
   );
 
   alert("Streaming settings saved");
+
+}
+
+// ================= NOTIFICATIONS =================
+
+let notifications = [];
+
+// OPEN PAGE
+function openNotifications(el) {
+
+  document.querySelectorAll(".menu li")
+    .forEach(li =>
+      li.classList.remove("active")
+    );
+
+  el.classList.add("active");
+
+  [
+    "dashboard-page",
+    "users-page",
+    "subscriptions-page",
+    "games-page",
+    "transactions-page",
+    "reports-page",
+    "support-page",
+    "vouchers-page",
+    "servers-page",
+    "analytics-page",
+    "settings-page"
+  ].forEach(id => {
+
+    const page =
+      document.getElementById(id);
+
+    if (page) {
+      page.style.display = "none";
+    }
+
+  });
+
+  document.getElementById(
+    "dashboard-controls"
+  ).style.display = "none";
+
+  document.getElementById(
+    "notifications-page"
+  ).style.display = "block";
+
+  renderNotifications();
+
+}
+
+// ADD NOTIFICATION
+function addNotification(
+  title,
+  message,
+  color = "#00d4ff"
+) {
+
+  notifications.unshift({
+    title,
+    message,
+    color,
+    time:new Date()
+      .toLocaleTimeString()
+  });
+
+  renderNotifications();
+
+}
+
+// RENDER
+function renderNotifications() {
+
+  const box =
+    document.getElementById(
+      "notificationsList"
+    );
+
+  if (!notifications.length) {
+
+    box.innerHTML = `
+      <div style="
+        opacity:0.7;
+        padding:20px;
+      ">
+        No notifications
+      </div>
+    `;
+
+    return;
+  }
+
+  let html = "";
+
+  notifications.forEach(n => {
+
+    html += `
+      <div style="
+        padding:20px;
+        background:#111827;
+        border-radius:16px;
+        margin-bottom:15px;
+        border-left:4px solid ${n.color};
+      ">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          margin-bottom:10px;
+        ">
+
+          <strong>
+            ${n.title}
+          </strong>
+
+          <span style="
+            color:#888;
+            font-size:13px;
+          ">
+            ${n.time}
+          </span>
+
+        </div>
+
+        <p style="
+          color:#ccc;
+        ">
+          ${n.message}
+        </p>
+
+      </div>
+    `;
+
+  });
+
+  box.innerHTML = html;
+
+}
+
+// CLEAR
+function clearNotifications() {
+
+  notifications = [];
+
+  renderNotifications();
 
 }
