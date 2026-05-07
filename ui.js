@@ -125,6 +125,7 @@ document.getElementById("servers-page").style.display = "none";
 document.getElementById("reports-page").style.display = "none";
 document.getElementById("support-page").style.display = "none";
 document.getElementById("vouchers-page").style.display = "none";
+document.getElementById("analytics-page").style.display = "none";
 
 
   // show users page
@@ -214,6 +215,8 @@ document.getElementById("servers-page").style.display = "none";
 document.getElementById("reports-page").style.display = "none";
 document.getElementById("support-page").style.display = "none";
 document.getElementById("vouchers-page").style.display = "none";
+document.getElementById("analytics-page").style.display = "none";
+
   // show subscriptions page
   document.getElementById("subscriptions-page").style.display = "block";
 
@@ -326,6 +329,8 @@ function openDashboard(el){
   document.getElementById("support-page").style.display = "none";
 
   document.getElementById("vouchers-page").style.display = "none";
+
+  document.getElementById("analytics-page").style.display = "none";
 }
 
 
@@ -356,6 +361,7 @@ function openGames(el) {
 
   document.getElementById("vouchers-page").style.display = "none";
 
+  document.getElementById("analytics-page").style.display = "none";
 
   document.getElementById("games-page").style.display = "block";
 
@@ -498,6 +504,7 @@ function openReports(el) {
   document.getElementById("servers-page").style.display = "none";
 
   document.getElementById("support-page").style.display = "none";
+document.getElementById("analytics-page").style.display = "none";
 
   document.getElementById("vouchers-page").style.display = "none";
 
@@ -544,6 +551,8 @@ el.classList.add("active");
   document.getElementById(
     "support-page"
   ).style.display = "none";
+
+  document.getElementById("analytics-page").style.display = "none";
 
   document.getElementById(
     "vouchers-page"
@@ -739,13 +748,148 @@ function openSupport(el) {
   document.getElementById("reports-page").style.display = "none";
 
   document.getElementById("vouchers-page").style.display = "none";
+document.getElementById("analytics-page").style.display = "none";
 
 
   document.getElementById("support-page").style.display = "block";
 
   loadSupportStatus();
 }
+// ================= ANALYTICS =================
 
+function openAnalytics(el) {
+
+  document.querySelectorAll(".menu li")
+    .forEach(li =>
+      li.classList.remove("active")
+    );
+
+  el.classList.add("active");
+
+  [
+    "dashboard-page",
+    "users-page",
+    "subscriptions-page",
+    "games-page",
+    "transactions-page",
+    "reports-page",
+    "support-page",
+    "vouchers-page",
+    "servers-page"
+  ].forEach(id => {
+
+    const page =
+      document.getElementById(id);
+
+    if (page) {
+      page.style.display = "none";
+    }
+
+  });
+
+  document.getElementById(
+    "dashboard-controls"
+  ).style.display = "none";
+
+  document.getElementById(
+    "analytics-page"
+  ).style.display = "block";
+
+  loadAnalytics();
+
+}
+
+async function loadAnalytics() {
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/admin-analytics`
+  );
+
+  if (!data || !data.success) {
+
+    alert("Failed to load analytics");
+
+    return;
+  }
+
+  // TOP STATS
+  document.getElementById(
+    "anaRevenue"
+  ).innerText =
+    "₹" + data.totalRevenue;
+
+  document.getElementById(
+    "anaUsers"
+  ).innerText =
+    data.totalUsers;
+
+  document.getElementById(
+    "anaHours"
+  ).innerText =
+    data.totalHours;
+
+  document.getElementById(
+    "anaVoucher"
+  ).innerText =
+    data.vouchersUsed;
+
+  // SYSTEM STATUS
+  document.getElementById(
+    "anaOnlinePCs"
+  ).innerText =
+    data.onlinePCs;
+
+  document.getElementById(
+    "anaBusyPCs"
+  ).innerText =
+    data.busyPCs;
+
+  document.getElementById(
+    "anaReports"
+  ).innerText =
+    data.openReports;
+
+  document.getElementById(
+    "anaSupport"
+  ).innerText =
+    data.supportOnline;
+
+  // TOP USERS
+  let html = "";
+
+  data.topUsers.forEach(u => {
+
+    html += `
+      <div style="
+        background:#111;
+        padding:14px;
+        border-radius:12px;
+        margin-bottom:12px;
+      ">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+        ">
+
+          <b>${u.username}</b>
+
+          <span>
+            ${u.hours}h
+          </span>
+
+        </div>
+
+      </div>
+    `;
+
+  });
+
+  document.getElementById(
+    "topUsers"
+  ).innerHTML = html;
+
+}
 // ================= SERVERS =================
 
 function openServers(el) {
@@ -772,6 +916,7 @@ function openServers(el) {
   document.getElementById("support-page").style.display = "none";
 
   document.getElementById("vouchers-page").style.display = "none";
+document.getElementById("analytics-page").style.display = "none";
 
 
   document.getElementById("servers-page").style.display = "block";
@@ -802,6 +947,7 @@ function openTransactions(el) {
   document.getElementById("reports-page").style.display = "none";
 
   document.getElementById("support-page").style.display = "none";
+document.getElementById("analytics-page").style.display = "none";
 
   document.getElementById("vouchers-page").style.display = "none";
 
