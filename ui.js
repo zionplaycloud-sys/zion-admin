@@ -620,23 +620,28 @@ async function loadVouchers() {
 
 async function createVoucher() {
 
-  const code =
-    document.getElementById(
-      "voucherCode"
-    ).value;
-
   const hours =
     document.getElementById(
       "voucherHours"
     ).value;
 
-  if (!code || !hours) {
+  if (!hours) {
 
     return alert(
-      "Fill all fields"
+      "Enter hours"
     );
 
   }
+
+  // AUTO GENERATE CODE
+  const random =
+    Math.random()
+      .toString(36)
+      .substring(2, 10)
+      .toUpperCase();
+
+  const code =
+    "ZP-" + random;
 
   const data = await safeFetch(
     `${BACKEND_URL}/create-voucher`,
@@ -657,21 +662,22 @@ async function createVoucher() {
 
   if (data?.success) {
 
-    loadVouchers();
-
     alert(
-      "Voucher created"
+      "Voucher Created:\n\n" +
+      code
     );
+
+    loadVouchers();
 
   } else {
 
-    alert(
-      "Failed"
-    );
+    alert("Failed");
 
   }
 
 }
+
+
 
 async function deleteVoucher(code) {
 
