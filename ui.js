@@ -4,6 +4,13 @@ let currentAdminUsername = "";
 
 async function safeFetch(url, options = {}) {
   try {
+        // auto add headers
+    options.headers = {
+      ...(options.headers || {}),
+      "x-admin-secret":
+        localStorage.getItem("adminToken") || ""
+    };
+
     const res = await fetch(url, options);
     if (!res.ok) {
       const err = await res.json().catch(() => null);
@@ -33,6 +40,10 @@ async function adminLogin() {
   if (!data.success || !data.isAdmin) return showMsg("Invalid admin login");
 
   currentAdminUsername = email;
+  localStorage.setItem(
+  "adminToken",
+  data.adminToken
+);
   localStorage.setItem(
   "admin_username",
   email
@@ -111,6 +122,8 @@ document.getElementById("subscriptions-page").style.display = "none";
 document.getElementById("games-page").style.display = "none";
 document.getElementById("transactions-page").style.display = "none";
 document.getElementById("servers-page").style.display = "none";
+document.getElementById("reports-page").style.display = "none";
+document.getElementById("support-page").style.display = "none";
 
   // show users page
   document.getElementById("users-page").style.display = "block";
@@ -120,21 +133,30 @@ document.getElementById("servers-page").style.display = "none";
 }
 
 async function loadUsers() {
-  const box = document.getElementById("userList");
+
+  const box =
+    document.getElementById("userList");
+
   box.innerHTML = "Loading...";
 
   try {
-    const res = await fetch(`${BACKEND_URL}/admin-users?username=${encodeURIComponent(currentAdminUsername)}`);
-    const data = await res.json();
 
-    if (!data.success) {
-      box.innerHTML = "Failed to load users";
+    const data = await safeFetch(
+      `${BACKEND_URL}/admin-users?username=${encodeURIComponent(currentAdminUsername)}`
+    );
+
+    if (!data || !data.success) {
+
+      box.innerHTML =
+        "Failed to load users";
+
       return;
     }
 
     let html = "";
 
     data.users.forEach(u => {
+
       html += `
         <div style="
           padding:10px;
@@ -142,8 +164,11 @@ async function loadUsers() {
           background:#111;
           border-radius:8px;
           cursor:pointer;
-        " onclick='showUser(${JSON.stringify(u)})'>
+        "
+        onclick='showUser(${JSON.stringify(u)})'>
+
           ${u.username}
+
         </div>
       `;
     });
@@ -151,8 +176,12 @@ async function loadUsers() {
     box.innerHTML = html;
 
   } catch (err) {
+
     console.log(err);
-    box.innerHTML = "Error loading users";
+
+    box.innerHTML =
+      "Error loading users";
+
   }
 }
 
@@ -180,6 +209,9 @@ document.getElementById("subscriptions-page").style.display = "none";
 document.getElementById("games-page").style.display = "none";
 document.getElementById("transactions-page").style.display = "none";
 document.getElementById("servers-page").style.display = "none";
+document.getElementById("reports-page").style.display = "none";
+
+document.getElementById("support-page").style.display = "none";
   // show subscriptions page
   document.getElementById("subscriptions-page").style.display = "block";
 
