@@ -1273,8 +1273,12 @@ async function loadReports() {
   let html = "";
 
   data.reports.forEach(r => {
-    if (r.status === "open") {
-
+if (
+  r.status === "open" &&
+  !notifications.some(
+    n => n.message.includes(r.title)
+  )
+) {
   addNotification(
     "New Report",
     `${r.username} submitted: ${r.title}`,
@@ -1783,3 +1787,14 @@ function clearNotifications() {
   renderNotifications();
 
 }
+
+// AUTO REPORT CHECK
+setInterval(() => {
+
+  if (currentAdminUsername) {
+
+    loadReports();
+
+  }
+
+}, 15000);
