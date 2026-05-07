@@ -138,6 +138,10 @@ button {
   Reports
 </li>
 
+<li onclick="openVouchers(this)">
+  Vouchers
+</li>
+
 <li onclick="openSupport(this)">
   Support
 </li>
@@ -301,6 +305,58 @@ style="display:none;">
   </div>
 
 </div>
+<!-- VOUCHERS PAGE -->
+<div class="card"
+id="vouchers-page"
+style="display:none;">
+
+  <h2>Vouchers</h2>
+
+  <div style="
+    display:flex;
+    gap:10px;
+    margin:20px 0;
+    flex-wrap:wrap;
+  ">
+
+    <input
+      id="voucherCode"
+      placeholder="Voucher Code"
+      style="
+        padding:10px;
+        border-radius:10px;
+        border:none;
+      "
+    >
+
+    <input
+      id="voucherHours"
+      type="number"
+      placeholder="Hours"
+      style="
+        padding:10px;
+        border-radius:10px;
+        border:none;
+      "
+    >
+
+    <button
+      onclick="createVoucher()"
+      class="btn-zion"
+    >
+      Create Voucher
+    </button>
+
+  </div>
+
+  <div id="voucherList">
+
+    Loading...
+
+  </div>
+
+</div>
+
 <!-- SUPPORT PAGE -->
 <div class="card"
 id="support-page"

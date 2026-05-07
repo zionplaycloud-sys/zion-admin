@@ -124,6 +124,8 @@ document.getElementById("transactions-page").style.display = "none";
 document.getElementById("servers-page").style.display = "none";
 document.getElementById("reports-page").style.display = "none";
 document.getElementById("support-page").style.display = "none";
+document.getElementById("vouchers-page").style.display = "none";
+
 
   // show users page
   document.getElementById("users-page").style.display = "block";
@@ -210,8 +212,8 @@ document.getElementById("games-page").style.display = "none";
 document.getElementById("transactions-page").style.display = "none";
 document.getElementById("servers-page").style.display = "none";
 document.getElementById("reports-page").style.display = "none";
-
 document.getElementById("support-page").style.display = "none";
+document.getElementById("vouchers-page").style.display = "none";
   // show subscriptions page
   document.getElementById("subscriptions-page").style.display = "block";
 
@@ -322,6 +324,8 @@ function openDashboard(el){
   document.getElementById("reports-page").style.display = "none";
 
   document.getElementById("support-page").style.display = "none";
+
+  document.getElementById("vouchers-page").style.display = "none";
 }
 
 
@@ -349,6 +353,9 @@ function openGames(el) {
   document.getElementById("reports-page").style.display = "none";
 
   document.getElementById("support-page").style.display = "none";
+
+  document.getElementById("vouchers-page").style.display = "none";
+
 
   document.getElementById("games-page").style.display = "block";
 
@@ -492,9 +499,212 @@ function openReports(el) {
 
   document.getElementById("support-page").style.display = "none";
 
+  document.getElementById("vouchers-page").style.display = "none";
+
+
   document.getElementById("reports-page").style.display = "block";
 
   loadReports();
+}
+function openVouchers(el) {
+
+  document.querySelectorAll(".menu li")
+  .forEach(li => li.classList.remove("active"));
+
+el.classList.add("active");
+
+ document.getElementById(
+  "dashboard-controls"
+).style.display = "none";
+
+  document.getElementById(
+    "users-page"
+  ).style.display = "none";
+
+  document.getElementById(
+    "subscriptions-page"
+  ).style.display = "none";
+
+  document.getElementById(
+    "games-page"
+  ).style.display = "none";
+
+  document.getElementById(
+    "transactions-page"
+  ).style.display = "none";
+
+  document.getElementById(
+    "servers-page"
+  ).style.display = "none";
+
+  document.getElementById(
+    "reports-page"
+  ).style.display = "none";
+
+  document.getElementById(
+    "support-page"
+  ).style.display = "none";
+
+  document.getElementById(
+    "vouchers-page"
+  ).style.display = "block";
+
+  loadVouchers();
+
+}
+
+async function loadVouchers() {
+
+  const box =
+    document.getElementById(
+      "voucherList"
+    );
+
+  box.innerHTML = "Loading...";
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/admin-vouchers`
+  );
+
+  if (!data || !data.success) {
+
+    box.innerHTML =
+      "Failed to load vouchers";
+
+    return;
+  }
+
+  let html = "";
+
+  data.vouchers.forEach(v => {
+
+    html += `
+      <div style="
+        background:#111;
+        padding:15px;
+        border-radius:12px;
+        margin-bottom:10px;
+      ">
+
+        <h3>${v.code}</h3>
+
+        <p>
+          Hours:
+          ${v.hours}
+        </p>
+
+        <p>
+          Used:
+          ${v.used ? "YES" : "NO"}
+        </p>
+
+        <p>
+          Redeemed By:
+          ${v.redeemed_by || "-"}
+        </p>
+
+        <button
+          class="danger"
+          onclick="deleteVoucher('${v.code}')">
+
+          Delete
+
+        </button>
+
+      </div>
+    `;
+  });
+
+  box.innerHTML = html;
+}
+
+async function createVoucher() {
+
+  const code =
+    document.getElementById(
+      "voucherCode"
+    ).value;
+
+  const hours =
+    document.getElementById(
+      "voucherHours"
+    ).value;
+
+  if (!code || !hours) {
+
+    return alert(
+      "Fill all fields"
+    );
+
+  }
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/create-voucher`,
+    {
+      method:"POST",
+
+      headers:{
+        "Content-Type":
+        "application/json"
+      },
+
+      body:JSON.stringify({
+        code,
+        hours
+      })
+    }
+  );
+
+  if (data?.success) {
+
+    loadVouchers();
+
+    alert(
+      "Voucher created"
+    );
+
+  } else {
+
+    alert(
+      "Failed"
+    );
+
+  }
+
+}
+
+async function deleteVoucher(code) {
+
+  if (!confirm(
+    "Delete voucher?"
+  )) return;
+
+  const data = await safeFetch(
+    `${BACKEND_URL}/delete-voucher`,
+    {
+      method:"POST",
+
+      headers:{
+        "Content-Type":
+        "application/json"
+      },
+
+      body:JSON.stringify({
+        code
+      })
+    }
+  );
+
+  if (data?.success) {
+
+    loadVouchers();
+
+  } else {
+
+    alert("Failed");
+
+  }
+
 }
 
 // ================= SUPPORT =================
@@ -521,6 +731,9 @@ function openSupport(el) {
   document.getElementById("servers-page").style.display = "none";
 
   document.getElementById("reports-page").style.display = "none";
+
+  document.getElementById("vouchers-page").style.display = "none";
+
 
   document.getElementById("support-page").style.display = "block";
 
@@ -552,6 +765,9 @@ function openServers(el) {
 
   document.getElementById("support-page").style.display = "none";
 
+  document.getElementById("vouchers-page").style.display = "none";
+
+
   document.getElementById("servers-page").style.display = "block";
 
   loadServers();
@@ -580,6 +796,9 @@ function openTransactions(el) {
   document.getElementById("reports-page").style.display = "none";
 
   document.getElementById("support-page").style.display = "none";
+
+  document.getElementById("vouchers-page").style.display = "none";
+
 
   document.getElementById("transactions-page").style.display = "block";
 
